@@ -6,17 +6,26 @@ all : lm.db lm.csv
 lm.db : lm.csv
 	csvs-to-sqlite $< $@
 
+.INTERMEDIATE : lm060126.csv lm070227.csv
 lm.csv : lm060126.csv lm070227.csv
 	csvstack $^ > $@
 
 %.csv : %.dat %.dct
 	python scripts/dat_to_csv.py $^ | csvcut -c $(HEADERS) > $@
 
+%.dct : %.dat
+
+lm060126.dct : LORS2006_ascii.zip
+	unzip -p $^ $@ > $@
+
+lm070227.dct : LORS2007_ascii.zip
+	unzip -p $^ $@ > $@
+
 lm060126.dat : LORS2006_ascii.zip
-	unzip -DD $<
+	unzip -p $^ $@ > $@
 
 lm070227.dat : LORS2007_ascii.zip
-	unzip -DD $<
+	unzip -p $^ $@ > $@
 
 LORS2006_ascii.zip:
 	wget -O $@ http://users.econ.umn.edu/~holmes/data/LORS/LORS2006_ascii.zip
@@ -24,6 +33,9 @@ LORS2006_ascii.zip:
 LORS2007_ascii.zip:
 	wget -O $@ http://users.econ.umn.edu/~holmes/data/LORS/LORS2007_ascii.zip
 
+.PHONY : clean
+clean :
+	- rm *.dct *.dat *.zip
 
 
 
