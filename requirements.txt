@@ -1,0 +1,4 @@
+statadict
+pandas
+csvs-to-sqlite
+csvkit
